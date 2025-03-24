@@ -2,6 +2,7 @@ streamlit
 plotly
 pandas
 xgboost
+statsmodels
 numpy
 joblib
 seaborn
