@@ -1,0 +1,81 @@
+Les données contiennent diverses informations sur les maisons, notamment :
+SalePrice : Prix de vente du bien immobilier en dollars. C'est la variable cible que vous devez prédire.
+MSSubClass : Classe du bâtiment.
+MSZoning : Classification générale du zonage.
+LotFrontage : Longueur linéaire de rue connectée à la propriété (en pieds).
+LotArea : Taille du terrain en pieds carrés.
+Street : Type d'accès routier.
+Alley : Type d'accès à l'allée.
+LotShape : Forme générale de la propriété.
+LandContour : Planéité du terrain.
+Utilities : Type de services publics disponibles.
+LotConfig : Configuration du terrain.
+LandSlope : Pente de la propriété.
+Neighborhood : Localisation physique dans les limites de la ville d'Ames.
+Condition1 : Proximité d'une route principale ou d'une voie ferrée.
+Condition2 : Proximité d'une deuxième route principale ou voie ferrée (si présente).
+BldgType : Type d’habitation.
+HouseStyle : Style architectural de l’habitation.
+OverallQual : Qualité générale des matériaux et des finitions.
+OverallCond : Évaluation de l'état général.
+YearBuilt : Année de construction initiale.
+YearRemodAdd : Année de rénovation.
+RoofStyle : Type de toit.
+RoofMatl : Matériau du toit.
+Exterior1st : Revêtement extérieur principal.
+Exterior2nd : Revêtement extérieur secondaire (si plus d’un matériau est utilisé).
+MasVnrType : Type de parement en maçonnerie.
+MasVnrArea : Surface du parement en maçonnerie en pieds carrés.
+ExterQual : Qualité des matériaux extérieurs.
+ExterCond : État actuel des matériaux extérieurs.
+Foundation : Type de fondation.
+BsmtQual : Hauteur du sous-sol.
+BsmtCond : État général du sous-sol.
+BsmtExposure : Présence d’un sous-sol avec fenêtres ou accès extérieur.
+BsmtFinType1 : Qualité de l’aménagement du sous-sol (partie 1).
+BsmtFinSF1 : Surface aménagée du sous-sol (partie 1).
+BsmtFinType2 : Qualité de l’aménagement du sous-sol (partie 2).
+BsmtFinSF2 : Surface aménagée du sous-sol (partie 2).
+BsmtUnfSF : Surface non aménagée du sous-sol.
+TotalBsmtSF : Surface totale du sous-sol en pieds carrés.
+Heating : Type de chauffage.
+HeatingQC : Qualité et état du chauffage.
+CentralAir : Présence de climatisation centrale.
+Electrical : Système électrique.
+1stFlrSF : Surface du premier étage en pieds carrés.
+2ndFlrSF : Surface du deuxième étage en pieds carrés.
+LowQualFinSF : Surface aménagée de faible qualité (tous étages confondus).
+GrLivArea : Surface habitable au-dessus du niveau du sol en pieds carrés.
+BsmtFullBath : Nombre de salles de bain complètes au sous-sol.
+BsmtHalfBath : Nombre de demi-salles de bain au sous-sol.
+FullBath : Nombre de salles de bain complètes au-dessus du sol.
+HalfBath : Nombre de demi-salles de bain au-dessus du sol.
+BedroomAbvGr : Nombre de chambres au-dessus du sous-sol.
+Kitchen : Nombre de cuisines.
+KitchenQual : Qualité de la cuisine.
+TotRmsAbvGrd : Nombre total de pièces au-dessus du sol (hors salles de bain).
+Functional : Évaluation de la fonctionnalité de la maison.
+Fireplaces : Nombre de cheminées.
+FireplaceQu : Qualité des cheminées.
+GarageType : Emplacement du garage.
+GarageYrBlt : Année de construction du garage.
+GarageFinish : Niveau de finition de l'intérieur du garage.
+GarageCars : Capacité du garage en nombre de voitures.
+GarageArea : Surface du garage en pieds carrés.
+GarageQual : Qualité du garage.
+GarageCond : État général du garage.
+PavedDrive : Type d’allée pavée.
+WoodDeckSF : Surface de la terrasse en bois en pieds carrés.
+OpenPorchSF : Surface du porche ouvert en pieds carrés.
+EnclosedPorch : Surface du porche fermé en pieds carrés.
+3SsnPorch : Surface du porche trois saisons en pieds carrés.
+ScreenPorch : Surface du porche avec moustiquaire en pieds carrés.
+PoolArea : Surface de la piscine en pieds carrés.
+PoolQC : Qualité de la piscine.
+Fence : Qualité de la clôture.
+MiscFeature : Caractéristique diverse non incluse dans d’autres catégories.
+MiscVal : Valeur monétaire des caractéristiques diverses.
+MoSold : Mois de la vente.
+YrSold : Année de la vente.
+SaleType : Type de vente.
+SaleCondition : Condition de la vente.
