@@ -1,13 +1,15 @@
-import streamlit as st 
-import plotly.express as px
-import pandas as pd
-import numpy as np
-import joblib
+from __future__ import annotations
+
 import pickle
-import seaborn as sns 
+from typing import Dict, Iterable, List, Optional, Tuple
+
+import joblib
 import matplotlib.pyplot as plt
-import base64
-from PIL import Image
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import seaborn as sns
+import streamlit as st
 from streamlit_option_menu import option_menu
 
 # Configuration de la page
@@ -18,19 +20,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Fonction pour convertir une image locale en base64
-def get_base64(image_file):
-    with open(image_file, "rb") as file:
-        data = file.read()
-    return base64.b64encode(data).decode()
-
 # Fonction pour formater les prix en format monétaire
-def format_price(price):
+def format_price(price: float) -> str:
     return f"${price:,.2f}"
 
 # Fonction pour charger et préparer les données
 @st.cache_data
-def load_data():
+def load_data() -> pd.DataFrame:
     try:
         data = pd.read_csv("data_cleaned.csv")
         return data
@@ -40,18 +36,19 @@ def load_data():
 
 # Fonction pour charger le modèle
 @st.cache_resource
-def load_model():
+def load_model() -> Tuple[Optional[object], Optional[List[str]], Optional[object]]:
     try:
         model = joblib.load(filename="mon_deuxieme_model.joblib")
+        encoder = joblib.load(filename="one_hot_encoder.joblib")
         with open("features_list.pkl", "rb") as f:
             feature_columns = pickle.load(f)
-        return model, feature_columns
+        return model, feature_columns, encoder
     except (FileNotFoundError, pickle.PickleError) as e:
         st.error(f"Erreur lors du chargement du modèle: {e}")
-        return None, None
+        return None, None, None
 
 # Chargement du modèle et des features
-model, feature_columns = load_model()
+model, feature_columns, encoder = load_model()
 
 # Chargement des données
 df = load_data()
@@ -113,7 +110,7 @@ if selected == " Accueil":
             st.rerun()
 
 # Fonction pour obtenir les caractéristiques de l'utilisateur
-def user_input_features():
+def user_input_features() -> Dict[str, object]:
     # Listes de valeurs pour les champs de type sélection
     neighborhoods = sorted(df["Neighborhood"].unique().tolist()) if not df.empty else ["CollgCr", "Veenker", "Crawfor", "NoRidge", "Mitchel"]
     sale_conditions = sorted(df["SaleCondition"].unique().tolist()) if not df.empty else ["Normal", "Abnorml", "Partial", "AdjLand", "Alloca", "Family"]
@@ -193,7 +190,7 @@ def user_input_features():
         sale_condition = st.selectbox("Condition de vente", sale_conditions)
 
     # Création du dictionnaire des valeurs saisies
-    user_data = {
+    user_data: Dict[str, object] = {
         "OverallQual": overall_qual,
         "OverallCond": overall_cond,
         "YearBuilt": year_built,
@@ -215,27 +212,57 @@ def user_input_features():
 
     return user_data
 
+def _prepare_features(user_data: Dict[str, object],
+                      cat_columns: Iterable[str]) -> Optional[pd.DataFrame]:
+    """Transforme les données utilisateur pour correspondre aux features du modèle.
+
+    Les variables catégorielles sont encodées via le OneHotEncoder entraîné et
+    les colonnes manquantes sont complétées afin de reproduire exactement le
+    vecteur de caractéristiques utilisé à l'entraînement.
+    """
+
+    if feature_columns is None or encoder is None:
+        st.error("Les métadonnées du modèle sont incomplètes (colonnes ou encodeur manquant).")
+        return None
+
+    df_user = pd.DataFrame([user_data])
+
+    # Séparer les colonnes numériques et catégorielles
+    cat_cols = [col for col in cat_columns if col in df_user.columns]
+    num_cols = [col for col in df_user.columns if col not in cat_cols]
+
+    # Encodage des variables catégorielles
+    if cat_cols:
+        cat_df = df_user[cat_cols]
+        encoded = encoder.transform(cat_df)
+        encoded_df = pd.DataFrame(encoded.toarray(), columns=encoder.get_feature_names_out(cat_cols))
+    else:
+        encoded_df = pd.DataFrame()
+
+    numeric_df = df_user[num_cols]
+    model_ready = pd.concat([numeric_df, encoded_df], axis=1)
+
+    # Ajout des colonnes manquantes dans l'ordre attendu
+    for col in feature_columns:
+        if col not in model_ready.columns:
+            model_ready[col] = 0
+
+    model_ready = model_ready[feature_columns]
+    return model_ready
+
+
 # 🔹 Fonction d'inférence : compléter les colonnes et faire la prédiction
-def inference(user_data):
-    if model is None or feature_columns is None:
+def inference(user_data: Dict[str, object]) -> Optional[float]:
+    if model is None:
         st.error("Le modèle n'a pas pu être chargé correctement.")
         return None
-        
-    # Convertir les entrées utilisateur en DataFrame
-    df = pd.DataFrame([user_data])
 
-    # Compléter les colonnes manquantes avec des valeurs par défaut (0 ou "NA")
-    for col in feature_columns:
-        if col not in df.columns:
-            df[col] = 0  # ou une valeur par défaut adaptée
+    prepared_df = _prepare_features(user_data, cat_columns=["Neighborhood", "SaleCondition", "KitchenQual"])
+    if prepared_df is None:
+        return None
 
-    # Réorganiser les colonnes dans le même ordre que l'entraînement
-    df = df[feature_columns]
-
-    # Faire la prédiction
-    prediction = model.predict(df)
-
-    return prediction[0]
+    prediction = model.predict(prepared_df)
+    return float(prediction[0])
 
 # Section de prédiction
 if selected == " Prédiction":
